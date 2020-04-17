@@ -1,0 +1,16 @@
+{
+  "name": "authyou",
+  "version": "1.0.0",
+  "description": "auth server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ksi123456ab",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "mysql": "2.18.1"
+  }
+}
