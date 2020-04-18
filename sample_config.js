@@ -15,5 +15,7 @@ module.exports = {
         password: 'password',
         database: 'database_name',
         insecureAuth: true
-    }
+    },
+
+    launcher_version: "0.0.1"
 }

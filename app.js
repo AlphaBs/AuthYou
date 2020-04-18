@@ -26,7 +26,11 @@ function fail(msg) {
 }
 
 app.use((req, res, next) => {
-    console.log(`${req.connection.remoteAddress} : ${req.path}`);
+    let version = req.query.version;
+    if (version == undefined)
+        version = "X"
+
+    console.log(`${req.connection.remoteAddress} [${version}] : ${req.path}`);
     next();
 });
 
@@ -159,6 +163,16 @@ async function stopServer() {
     console.log("stop server");
     process.exit();
 }
+
+app.get('/version', async (req, res) => {
+    try {
+        res.send(config.launcher_version);
+    }
+    catch (e) {
+        console.log(e);
+        res.send(fail(e));
+    }
+});
 
 app.get('/stop', async (req, res) => {
     try {
