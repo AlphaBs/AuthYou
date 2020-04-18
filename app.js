@@ -133,6 +133,13 @@ app.get('/checkuser', async (req, res) => {
     }
 });
 
+async function resetDb() {
+    console.log("start db reset");
+    await db.deleteAllAllowingUser();
+    await db.deleteAllWaitingUser();
+    console.log("end db reset");
+}
+
 app.get('/reset', async (req, res) => {
     try {
         await resetDb();
@@ -144,13 +151,6 @@ app.get('/reset', async (req, res) => {
         res.send(fail(e));
     }
 });
-
-async function resetDb() {
-    console.log("start db reset");
-    await db.deleteAllAllowingUser();
-    await db.deleteAllWaitingUser();
-    console.log("end db reset");
-}
 
 async function stopServer() {
     await db.end();
@@ -198,7 +198,7 @@ async function init() {
         console.log('server started');
 
         try {
-            process.send('ready');
+            process.send('ready'); // pm2
         } catch (e) {
             console.log(e);
         }
