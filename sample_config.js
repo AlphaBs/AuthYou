@@ -7,7 +7,7 @@ module.exports = {
     userExpireM: 2,
     allowExpireS: 40,
     showErrorMsg: true,
-    stopPassword: '1234',
+    adminPassword: '1234',
 
     dbconfig: {
         host: '127.0.0.1',

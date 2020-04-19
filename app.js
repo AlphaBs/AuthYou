@@ -146,6 +146,10 @@ async function resetDb() {
 
 app.get('/reset', async (req, res) => {
     try {
+        let pw = req.query.pw;
+        if (!pw || pw !== config.adminPassword)
+            throw new Error('not equal password');
+
         await resetDb();
         res.send("completed");
     }
@@ -177,9 +181,7 @@ app.get('/version', async (req, res) => {
 app.get('/stop', async (req, res) => {
     try {
         let pw = req.query.pw;
-        if (!pw)
-            throw new Error('not equal password');
-        if (pw !== config.stopPassword)
+        if (!pw || pw !== config.adminPassword)
             throw new Error('not equal password');
 
         res.send('stopping');
