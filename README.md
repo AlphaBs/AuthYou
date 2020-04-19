@@ -19,7 +19,7 @@ config.js :
         userExpireM: 10,
         allowExpireS: 40,
         showErrorMsg: false,
-        stopPassword: 'stoppw1324',
+        adminPassword: 'iamadmin',
         
         dbconfig: {
             host: 'mysql_server_host',
@@ -73,3 +73,60 @@ run this command in `AuthYou` directory via PowerShell :
     pm2 monit
     
 end
+
+
+# API
+
+### Workflow :
+1. /key
+2. decoding in client
+3. /connect
+4. /checkuser (in server)
+
+### Common : 
+URL Query `version` is used to determine client version.  
+example : `/key?version=418`
+
+All error response follow this form : 
+
+    {
+        "result": false,
+        "msg": "<ERROR MESSAGE>" // can be null
+    }
+
+### POST /key
+**Request body** : `<EMPTY STRING>`
+**Response** : 
+
+    {
+        "result": true,
+        "version": "<ENCRYPTER VERSION>" // not equal to client version
+        "psig": "<SIGNATURE>"
+    }
+    
+ ### POST /connect
+ **Request Body**: 
+ 
+    {
+        "des": "<deciphered signature>"
+    }
+    
+**Response** :
+
+    {
+        "result": true
+    }
+    
+### GET /checkuser
+**URL Query**: `?ip=<USER_IP>`  
+**Response**: `S`
+
+### GET /reset
+**Description**: Delete all rows in database.  
+**URL Query**: `?pw=<Admin_Password>` *(adminPassword in config.js)*  
+**Response**: `completed`  
+
+### GET /stop
+**Description**: Stop process. *(Note: This does not stop actual server, but stop one cluster of server.)*  
+**URL Query**: `?pw=<Admin_Password>` *(adminPassword in config.js)*  
+**Response**: `stopping`
