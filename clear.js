@@ -1,13 +1,23 @@
 const http = require("http");
+const config = require("./config/config");
 
-const server = "127.0.0.1:25588";
+const server = "127.0.0.1";
+const port = config.port;
 const path = "/reset";
 
-http.request({
+const req = http.request({
 	hostname: server,
+	port: port,
 	path: path
 }, (res) => {
-	console.log(res);
-	console.log("completed");
-	process.exit();
+	res.on('data', (chunk) => {
+		console.log(Buffer.from(chunk).toString());
+	});
+	res.on('end', () => {
+		console.log("completed");
+		process.exit();
+	});
 });
+
+
+req.end();
