@@ -95,7 +95,7 @@ All error response follow this form :
     }
 
 ### POST /key
-**Request body** : `<EMPTY STRING>`
+**Request body** : *(EMPTY STRING)*  
 **Response** : 
 
     {
