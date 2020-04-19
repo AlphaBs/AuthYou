@@ -2,7 +2,7 @@ const express = require('express');
 const moment = require('moment');
 const encrypter = require('./encrypter');
 const userdb = require('./userdb');
-const config = require('./config/remote_config');
+const config = require('./config/config');
 
 const app = express();
 const enc = new encrypter.Encrypter();
