@@ -210,7 +210,11 @@ process.on('SIGINT', function () {
 async function init() {
     await db.test();
 
-    server = app.listen(config.port, config.host, () => {
+    let port = process.env.PORT;
+    if (port == null || port == "")
+        port = config.port;
+
+    server = app.listen(port, config.host, () => {
         console.log('server started');
 
         try {
