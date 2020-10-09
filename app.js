@@ -4,6 +4,9 @@ const encrypter = require('./encrypter');
 const userdb = require('./userdb');
 const config = require('./config/config');
 
+require('dotenv').config();
+const adminPassowrd = process.env.ADMIN_PASSWORD;
+
 const app = express();
 const enc = new encrypter.Encrypter();
 const db = new userdb.UserDB(config.dbconfig);
@@ -107,8 +110,11 @@ app.get('/checkuser', async (req, res) => {
         if (ip.includes(':'))
             ip = ip.split(':')[0].replace(/\//gi, "");
 
-        if (ip === "127.0.0.1" || ip === "192.168.0.1") {
-            res.send('S');
+        if (config.allowLocal && (ip === "127.0.0.1" || ip === "192.168.0.1")) {
+            console.log("allow local user");
+            res.send({
+                result: true
+            });
             return;
         }
 
@@ -126,7 +132,9 @@ app.get('/checkuser', async (req, res) => {
 
         console.log("allow " + ip);
         await db.removeAllowingUser(ip);
-        res.send('S');
+        res.send({
+            result: true
+        });
     }
     catch (e) {
         if (userdata)
@@ -147,7 +155,7 @@ async function resetDb() {
 app.get('/reset', async (req, res) => {
     try {
         let pw = req.query.pw;
-        if (!pw || pw !== config.adminPassword)
+        if (!pw || pw !== adminPassword)
             throw new Error('not equal password');
 
         await resetDb();
@@ -181,7 +189,7 @@ app.get('/version', async (req, res) => {
 app.get('/stop', async (req, res) => {
     try {
         let pw = req.query.pw;
-        if (!pw || pw !== config.adminPassword)
+        if (!pw || pw !== adminPassword)
             throw new Error('not equal password');
 
         res.send('stopping');
@@ -208,7 +216,7 @@ process.on('SIGINT', function () {
 })
 
 async function init() {
-    await db.test();
+    await db.connect();
 
     let port = process.env.PORT;
     if (port == null || port == "")
