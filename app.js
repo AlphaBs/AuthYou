@@ -4,12 +4,11 @@ const encrypter = require('./encrypter');
 const userdb = require('./userdb');
 const config = require('./config/config');
 
-require('dotenv').config();
-const adminPassowrd = process.env.ADMIN_PASSWORD;
-
 const app = express();
 const enc = new encrypter.Encrypter();
 const db = new userdb.UserDB(config.dbconfig);
+
+const adminPassword = config.adminPassword;
 
 let server;
 
@@ -26,6 +25,13 @@ function fail(msg) {
     }
 
     return failObj;
+}
+
+function isInternal(ip) {
+    return ip.startsWith("127.")
+        || ip.startsWith("192.168")
+        || ip.startsWith("172.10")
+        || ip.startsWith("10.")
 }
 
 app.use((req, res, next) => {
@@ -110,7 +116,7 @@ app.get('/checkuser', async (req, res) => {
         if (ip.includes(':'))
             ip = ip.split(':')[0].replace(/\//gi, "");
 
-        if (config.allowLocal && (ip === "127.0.0.1" || ip === "192.168.0.1")) {
+        if (config.allowLocal && isInternal(ip)) {
             console.log("allow local user");
             res.send({
                 result: true
@@ -132,6 +138,7 @@ app.get('/checkuser', async (req, res) => {
 
         console.log("allow " + ip);
         await db.removeAllowingUser(ip);
+        
         res.send({
             result: true
         });
@@ -186,6 +193,16 @@ app.get('/version', async (req, res) => {
     }
 });
 
+app.get('/test', async (req, res) => {
+    try {
+        res.send(db.test());
+    }
+    catch (e) {
+        console.log(e);
+        res.send(fail(e));
+    }
+})
+
 app.get('/stop', async (req, res) => {
     try {
         let pw = req.query.pw;
@@ -217,6 +234,9 @@ process.on('SIGINT', function () {
 
 async function init() {
     await db.connect();
+
+    var test = await db.getUserData('127.0.0.1');
+    console.log(test);
 
     let port = process.env.PORT;
     if (port == null || port == "")

@@ -1,5 +1,4 @@
-
-const mysql = require('mysql');
+const mysql = require('mysql2/promise');
 
 function momentEscape(e) {
     return e.format('YYYYMMDDHHmmss');
@@ -7,19 +6,18 @@ function momentEscape(e) {
 
 class UserDB {
     constructor(conf) {
-        this.db = mysql.createConnection(conf);
+        this.conf = conf;
+    }
+
+    async connect() {
+        this.db = await mysql.createConnection(this.conf);
         this.db.connect();
     }
 
-    request(sql) {
-        return new Promise((resolve, reject) => {
-            this.db.query(sql, (err, rows) => {
-                if (err)
-                    reject(err);
-
-                resolve(rows);
-            });
-        });
+    async request(sql) {
+        let result = await this.db.execute(sql);
+        return result[0];
+        //return (await this.db.execute(sql))[0];
     }
 
     async test() {

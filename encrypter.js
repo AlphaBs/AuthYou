@@ -1,4 +1,3 @@
-
 let uuid = "156CB35728394D55B7DC31E95670AE5E";
 
 function GetHexVal(hex) {
